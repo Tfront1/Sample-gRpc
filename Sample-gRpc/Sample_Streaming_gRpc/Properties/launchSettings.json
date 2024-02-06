@@ -1,0 +1,13 @@
+﻿{
+  "profiles": {
+    "Sample_Streaming_gRpc": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5014;https://localhost:7077",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

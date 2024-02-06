@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{8CCA86
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRpcClient", "gRpcClient\gRpcClient.csproj", "{5A935D88-EAEA-4700-AE1D-9B8CCF15EF49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample_Streaming_gRpc", "Sample_Streaming_gRpc\Sample_Streaming_gRpc.csproj", "{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{5A935D88-EAEA-4700-AE1D-9B8CCF15EF49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A935D88-EAEA-4700-AE1D-9B8CCF15EF49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A935D88-EAEA-4700-AE1D-9B8CCF15EF49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
