@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample-gRpc", "Sample-gRpc\Sample-gRpc.csproj", "{9C004CC3-AB61-40F4-B71C-C6BDE95D8849}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample_gRpc", "Sample-gRpc\Sample_gRpc.csproj", "{9C004CC3-AB61-40F4-B71C-C6BDE95D8849}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{8CCA86CA-4A49-4ED4-9849-A5B1C93AA802}"
 EndProject
