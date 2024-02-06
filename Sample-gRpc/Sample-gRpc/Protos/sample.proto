@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "Sample-gRpc.Protos";
+
+package sample;
+
+service Sample {
+  rpc GetFullName (SampleRequest) returns (SampleResponce);
+}
+
+message SampleRequest{
+	string firstName = 1;
+	string lastName = 2;
+}
+
+message SampleResponce{
+	string fullName = 1;
+}
