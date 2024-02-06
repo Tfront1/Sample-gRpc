@@ -19,6 +19,8 @@ namespace gRpcClient
 
             await ServerSampleStreaming();
 
+            await ClientSampleStreaming();
+
             Console.ReadLine();
         }
 
@@ -72,6 +74,24 @@ namespace gRpcClient
             Console.WriteLine("Server streaming completed");
 
             await channel.ShutdownAsync();
+        }
+
+        private async static Task ClientSampleStreaming()
+        {
+            Random random = new Random();
+
+            var channel = GrpcChannel.ForAddress("http://localhost:5014");
+
+            var client = new SampleStream.SampleStreamClient(channel);
+
+            var stream = client.ClientSampleStreaming();
+
+            for (int i = 0; i < 5; i++) {
+                await stream.RequestStream.WriteAsync(new Test { TestMessage = $"Message{i}" });
+                await Task.Delay(random.Next(1, 10) * 1000);
+            }
+            //We need notify server that streaming completed
+            await stream.RequestStream.CompleteAsync();
         }
     }
 }
