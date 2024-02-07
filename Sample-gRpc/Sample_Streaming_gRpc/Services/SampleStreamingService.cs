@@ -30,6 +30,28 @@ namespace Sample_Streaming_gRpc.Services
 
             return new Test { TestMessage = "test" };
         }
+
+        public override async Task BidirectionalSampleStreaming(IAsyncStreamReader<Test> requestStream, IServerStreamWriter<Test> responseStream, ServerCallContext context)
+        {
+            var tasks = new List<Task>();
+
+            while (await requestStream.MoveNext()) 
+            {
+                Console.WriteLine($"Recieved Request : {requestStream.Current.TestMessage}");
+                var task = Task.Run(async () => 
+                {
+                    var message = requestStream.Current.TestMessage;
+                    await Task.Delay(random.Next(1, 10) * 1000);
+
+                    await responseStream.WriteAsync(new Test { TestMessage = message });
+                    Console.WriteLine($"Send response : {message}");
+                });
+                tasks.Add(task);
+            }
+
+            await Task.WhenAll(tasks);
+            Console.WriteLine("Bidirectionl streaming completed");
+        }
     }
 
 }

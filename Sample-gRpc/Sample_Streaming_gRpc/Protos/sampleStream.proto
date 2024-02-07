@@ -7,6 +7,7 @@ package samplestream;
 service SampleStream{
 	rpc ServerSampleStreaming(Test) returns(stream Test);
 	rpc ClientSampleStreaming(stream Test) returns(Test);
+	rpc BidirectionalSampleStreaming(stream Test) returns(stream Test);
 }
 
 message Test{

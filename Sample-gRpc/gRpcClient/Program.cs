@@ -9,17 +9,25 @@ namespace gRpcClient
     {
         public static async Task Main(string[] args)
         {
-            var channel = GrpcChannel.ForAddress("http://localhost:5195");
+            var unaryChannel = GrpcChannel.ForAddress("http://localhost:5195");
 
-            await GetFullName(channel);
+            await GetFullName(unaryChannel);
 
-            await AddGetProducts(channel);
+            await AddGetProducts(unaryChannel);
 
-            await channel.ShutdownAsync();
+            await unaryChannel.ShutdownAsync();
 
-            await ServerSampleStreaming();
+            //////////////////////
 
-            await ClientSampleStreaming();
+            var streamingChannel = GrpcChannel.ForAddress("http://localhost:5014");
+
+            await ServerSampleStreaming(streamingChannel);
+
+            await ClientSampleStreaming(streamingChannel);
+
+            await BidirectionalSampleStreaming(streamingChannel);
+
+            await streamingChannel.ShutdownAsync();
 
             Console.ReadLine();
         }
@@ -58,10 +66,8 @@ namespace gRpcClient
             }
         }
 
-        private async static Task ServerSampleStreaming()
+        private async static Task ServerSampleStreaming(GrpcChannel channel)
         {
-            var channel = GrpcChannel.ForAddress("http://localhost:5014");
-
             var client = new SampleStream.SampleStreamClient(channel);
 
             var response = client.ServerSampleStreaming(new Test {TestMessage = "test" });
@@ -72,15 +78,11 @@ namespace gRpcClient
                 Console.WriteLine(value);
             }
             Console.WriteLine("Server streaming completed");
-
-            await channel.ShutdownAsync();
         }
 
-        private async static Task ClientSampleStreaming()
+        private async static Task ClientSampleStreaming(GrpcChannel channel)
         {
             Random random = new Random();
-
-            var channel = GrpcChannel.ForAddress("http://localhost:5014");
 
             var client = new SampleStream.SampleStreamClient(channel);
 
@@ -92,6 +94,38 @@ namespace gRpcClient
             }
             //We need notify server that streaming completed
             await stream.RequestStream.CompleteAsync();
+        }
+
+        private async static Task BidirectionalSampleStreaming(GrpcChannel channel)
+        {
+            Random random = new Random();
+
+            var client = new SampleStream.SampleStreamClient(channel);
+
+            var stream = client.BidirectionalSampleStreaming();
+
+            var requestTask = Task.Run(async () =>
+            {
+                for (int i = 0; i < 5; i++) 
+                {
+                    await Task.Delay(random.Next(1, 10) * 1000);
+                    await stream.RequestStream.WriteAsync(new Test { TestMessage = i.ToString() });
+                    Console.WriteLine($"Sended request : {i}");
+                }
+                Console.WriteLine("Requesst strem compleeted");
+                await stream.RequestStream.CompleteAsync();
+            });
+
+            var responseTask = Task.Run(async () =>
+            {
+                while (await stream.ResponseStream.MoveNext(CancellationToken.None))
+                {
+                    Console.WriteLine($"Recieved responce : {stream.ResponseStream.Current.TestMessage}");
+                }
+                Console.WriteLine("Responce strem compleeted");
+            });
+
+            await Task.WhenAll(requestTask, responseTask);
         }
     }
 }
