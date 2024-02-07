@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample_gRpc", "Sample-gRpc\Sample_gRpc.csproj", "{9C004CC3-AB61-40F4-B71C-C6BDE95D8849}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample_gRpc", "Sample-gRpc\Sample_gRpc.csproj", "{9C004CC3-AB61-40F4-B71C-C6BDE95D8849}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{8CCA86CA-4A49-4ED4-9849-A5B1C93AA802}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRpcClient", "gRpcClient\gRpcClient.csproj", "{5A935D88-EAEA-4700-AE1D-9B8CCF15EF49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gRpcClient", "gRpcClient\gRpcClient.csproj", "{5A935D88-EAEA-4700-AE1D-9B8CCF15EF49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample_Streaming_gRpc", "Sample_Streaming_gRpc\Sample_Streaming_gRpc.csproj", "{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample_Streaming_gRpc", "Sample_Streaming_gRpc\Sample_Streaming_gRpc.csproj", "{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationServer", "AuthorizationServer\AuthorizationServer.csproj", "{15E3CCB9-970F-465C-B660-F9A0588223AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C739824-0B4B-4F7A-A60A-AE77A755AF9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15E3CCB9-970F-465C-B660-F9A0588223AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15E3CCB9-970F-465C-B660-F9A0588223AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15E3CCB9-970F-465C-B660-F9A0588223AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15E3CCB9-970F-465C-B660-F9A0588223AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
