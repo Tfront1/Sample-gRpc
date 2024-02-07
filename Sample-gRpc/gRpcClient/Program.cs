@@ -12,28 +12,6 @@ namespace gRpcClient
     {
         public static async Task Main(string[] args)
         {
-            //var unaryChannel = GrpcChannel.ForAddress("http://localhost:5195");
-
-            //await GetFullName(unaryChannel);
-
-            //await AddGetProducts(unaryChannel);
-
-            //await unaryChannel.ShutdownAsync();
-
-            ////////////////////////
-
-            //var streamingChannel = GrpcChannel.ForAddress("http://localhost:5014");
-
-            //await ServerSampleStreaming(streamingChannel);
-
-            //await ClientSampleStreaming(streamingChannel);
-
-            //await BidirectionalSampleStreaming(streamingChannel);
-
-            //await streamingChannel.ShutdownAsync();
-
-            //////////////////////
-            
             var authChannel = GrpcChannel.ForAddress("http://localhost:5094");
 
             string jwtToken = await GetJwtToken(authChannel);
@@ -42,7 +20,8 @@ namespace gRpcClient
             headers.Add("Authorization", $"Bearer {jwtToken}");
 
             bool isCalculating = true;
-            while (isCalculating) {
+            while (isCalculating)
+            {
                 Console.WriteLine("Enter 1 to Add, 2 to Sub, 3 to Leave");
                 if (Console.ReadLine() == "1")
                 {
@@ -57,9 +36,32 @@ namespace gRpcClient
                     isCalculating = false;
                 }
             }
-            
+
 
             await authChannel.ShutdownAsync();
+
+            ////////////////////////
+
+
+            var unaryChannel = GrpcChannel.ForAddress("http://localhost:5195");
+
+            await GetFullName(unaryChannel);
+             
+            await AddGetProducts(unaryChannel, headers);
+
+            await unaryChannel.ShutdownAsync();
+
+            //////////////////////
+
+            var streamingChannel = GrpcChannel.ForAddress("http://localhost:5014");
+
+            await ServerSampleStreaming(streamingChannel);
+
+            await ClientSampleStreaming(streamingChannel);
+
+            await BidirectionalSampleStreaming(streamingChannel);
+
+            await streamingChannel.ShutdownAsync();
 
             Console.ReadLine();
         }
@@ -75,7 +77,7 @@ namespace gRpcClient
             Console.WriteLine(responce.FullName);
         }
 
-        private static async Task AddGetProducts(GrpcChannel channel)
+        private static async Task AddGetProducts(GrpcChannel channel, Metadata headers)
         {
             var productClient = new Product.ProductClient(channel);
 
@@ -87,10 +89,11 @@ namespace gRpcClient
                 ProductName = "Bim",
                 Price = 1000,
                 StockDate = Timestamp.FromDateTime(stockDate)
-            }); ;
+            },
+            headers); ;
             Console.WriteLine($"{productAddResponse.StatusCode} | {productAddResponse.IsSuccessful}");
 
-            var productsGetResponse = await productClient.GetAllProductsAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            var productsGetResponse = await productClient.GetAllProductsAsync(new Empty(), headers);
 
             foreach (var product in productsGetResponse.Products)
             {

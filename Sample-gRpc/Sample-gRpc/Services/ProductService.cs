@@ -1,11 +1,13 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using SamplegRpc;
 
 namespace Sample_gRpc.Services
 {
     public class ProductService : Product.ProductBase
     {
+        [Authorize(Roles = "Admin")]
         public override async Task<ProductAddResponse> AddProduct(ProductModel request, ServerCallContext context)
         {
             Console.WriteLine($"{request.ProductCode} | {request.ProductName} | {request.Price} | {request.StockDate}");
@@ -18,6 +20,7 @@ namespace Sample_gRpc.Services
             return result;
         }
 
+        [Authorize(Roles = "User,Admin")]
         public override async Task<ProductList> GetAllProducts(Empty request, ServerCallContext context)
         {
             var stockDate = DateTime.SpecifyKind(new DateTime(2022, 1, 1), DateTimeKind.Utc);
