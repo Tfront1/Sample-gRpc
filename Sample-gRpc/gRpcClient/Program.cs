@@ -40,7 +40,24 @@ namespace gRpcClient
 
             var headers = new Metadata();
             headers.Add("Authorization", $"Bearer {jwtToken}");
-            await AddNumbers(authChannel, headers);
+
+            bool isCalculating = true;
+            while (isCalculating) {
+                Console.WriteLine("Enter 1 to Add, 2 to Sub, 3 to Leave");
+                if (Console.ReadLine() == "1")
+                {
+                    await AddNumbers(authChannel, headers);
+                }
+                else if (Console.ReadLine() == "2")
+                {
+                    await SubstractNumbers(authChannel, headers);
+                }
+                else
+                {
+                    isCalculating = false;
+                }
+            }
+            
 
             await authChannel.ShutdownAsync();
 
@@ -149,11 +166,26 @@ namespace gRpcClient
         {
             var authClient = new Authentication.AuthenticationClient(channel);
 
-            var response = await authClient.AuthenticateAsync(new AuthenticationRequest
+            AuthenticationRequest request = default;
+            Console.WriteLine("Enter 1 to be admin, 2 to be user");
+            if (Console.ReadLine() == "1")
             {
-                UserName = "admin",
-                Password = "admin"
-            });
+                request = new AuthenticationRequest
+                {
+                    UserName = "admin",
+                    Password = "admin"
+                };
+            }
+            else 
+            {
+                request = new AuthenticationRequest
+                {
+                    UserName = "user",
+                    Password = "user"
+                };
+            }
+
+            var response = await authClient.AuthenticateAsync(request);
 
             Console.WriteLine($"Auth token : {response.AccessToken}\nExpiresIn : {response.ExpiresIn}");
             return response.AccessToken;
@@ -163,9 +195,19 @@ namespace gRpcClient
         {
             var calculateClient = new Calculation.CalculationClient(channel);
 
-            var result = calculateClient.Add(new InputNumbers { Number1 = 1, Number2 = 2 }, headers);
+            var result = await calculateClient.AddAsync(new InputNumbers { Number1 = 1, Number2 = 2 }, headers);
 
             Console.WriteLine($"Adding result : {result.Result}");
+            return result.Result;
+        }
+
+        private async static Task<int> SubstractNumbers(GrpcChannel channel, Metadata headers)
+        {
+            var calculateClient = new Calculation.CalculationClient(channel);
+
+            var result = await calculateClient.SubstractAsync(new InputNumbers { Number1 = 5, Number2 = 2 }, headers);
+
+            Console.WriteLine($"Substract result : {result.Result}");
             return result.Result;
         }
     }

@@ -13,7 +13,16 @@ namespace AuthorizationServer
         private const int JWT_TOKEN_LIFE_MINUTES = 30;
         public static AuthenticationResponse Authenticate(AuthenticationRequest authenticationRequest)
         {
-            if (authenticationRequest.UserName != "admin" || authenticationRequest.Password != "admin")
+            var userRole = string.Empty;
+            if (authenticationRequest.UserName == "admin" || authenticationRequest.Password == "admin")
+            {
+                userRole = "Admin";
+            }
+            else if (authenticationRequest.UserName == "user" || authenticationRequest.Password == "user")
+            {
+                userRole = "User";
+            }
+            else
             {
                 return null;
             }
@@ -29,7 +38,7 @@ namespace AuthorizationServer
                 Subject = new ClaimsIdentity(new List<Claim> 
                 {
                     new Claim("username", authenticationRequest.UserName),
-                    new Claim(ClaimTypes.Role, "Admin"),
+                    new Claim(ClaimTypes.Role, userRole),
                 }),
                 Expires = tokenExpiryDateTime,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey),

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AuthorizationServer.Services
 {
-    [Authorize]
     public class CalculationService: Calculation.CalculationBase
     {
+        [Authorize(Roles = "Admin")]
         public override async Task<CalculationResult> Add(InputNumbers request, ServerCallContext context)
         {
             return new CalculationResult {
@@ -14,6 +14,7 @@ namespace AuthorizationServer.Services
             };
         }
 
+        [Authorize(Roles = "Admin,User")]
         public override async Task<CalculationResult> Substract(InputNumbers request, ServerCallContext context)
         {
             return new CalculationResult
