@@ -26,22 +26,23 @@ namespace AuthorizationServer
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("bimBimBamBam")),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtAuthenticationManager.JWT_TOKEN_KEY)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
             });
-            
+            builder.Services.AddAuthorization();
+
             builder.Services.AddGrpc();
 
             var app = builder.Build();
 
-            builder.Services.AddAuthorization();
-            builder.Services.AddAuthentication();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             // Configure the HTTP request pipeline.
             app.MapGrpcService<AuthenticationService>();
-            app.MapGrpcService<GreeterService>();
-            app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+            app.MapGrpcService<CalculationService>();
 
             app.Run();
         }

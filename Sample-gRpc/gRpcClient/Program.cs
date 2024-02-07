@@ -1,7 +1,10 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using AuthorizationServer.Protos;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Sample_Streaming_gRpc.Protos;
 using SamplegRpc;
+using System.Threading.Channels;
 
 namespace gRpcClient
 {
@@ -9,30 +12,43 @@ namespace gRpcClient
     {
         public static async Task Main(string[] args)
         {
-            var unaryChannel = GrpcChannel.ForAddress("http://localhost:5195");
+            //var unaryChannel = GrpcChannel.ForAddress("http://localhost:5195");
 
-            await GetFullName(unaryChannel);
+            //await GetFullName(unaryChannel);
 
-            await AddGetProducts(unaryChannel);
+            //await AddGetProducts(unaryChannel);
 
-            await unaryChannel.ShutdownAsync();
+            //await unaryChannel.ShutdownAsync();
+
+            ////////////////////////
+
+            //var streamingChannel = GrpcChannel.ForAddress("http://localhost:5014");
+
+            //await ServerSampleStreaming(streamingChannel);
+
+            //await ClientSampleStreaming(streamingChannel);
+
+            //await BidirectionalSampleStreaming(streamingChannel);
+
+            //await streamingChannel.ShutdownAsync();
 
             //////////////////////
+            
+            var authChannel = GrpcChannel.ForAddress("http://localhost:5094");
 
-            var streamingChannel = GrpcChannel.ForAddress("http://localhost:5014");
+            string jwtToken = await GetJwtToken(authChannel);
 
-            await ServerSampleStreaming(streamingChannel);
+            var headers = new Metadata();
+            headers.Add("Authorization", $"Bearer {jwtToken}");
+            await AddNumbers(authChannel, headers);
 
-            await ClientSampleStreaming(streamingChannel);
-
-            await BidirectionalSampleStreaming(streamingChannel);
-
-            await streamingChannel.ShutdownAsync();
+            await authChannel.ShutdownAsync();
 
             Console.ReadLine();
         }
 
-        private static async Task GetFullName(GrpcChannel channel) {
+        private static async Task GetFullName(GrpcChannel channel)
+        {
             var client = new Sample.SampleClient(channel);
 
             //var responce = client.GetFullName(new SampleRequest { FirstName = "Taras", LastName = "Taranko" });
@@ -70,7 +86,7 @@ namespace gRpcClient
         {
             var client = new SampleStream.SampleStreamClient(channel);
 
-            var response = client.ServerSampleStreaming(new Test {TestMessage = "test" });
+            var response = client.ServerSampleStreaming(new Test { TestMessage = "test" });
 
             while (await response.ResponseStream.MoveNext(CancellationToken.None))
             {
@@ -88,7 +104,8 @@ namespace gRpcClient
 
             var stream = client.ClientSampleStreaming();
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++)
+            {
                 await stream.RequestStream.WriteAsync(new Test { TestMessage = $"Message{i}" });
                 await Task.Delay(random.Next(1, 10) * 1000);
             }
@@ -106,7 +123,7 @@ namespace gRpcClient
 
             var requestTask = Task.Run(async () =>
             {
-                for (int i = 0; i < 5; i++) 
+                for (int i = 0; i < 5; i++)
                 {
                     await Task.Delay(random.Next(1, 10) * 1000);
                     await stream.RequestStream.WriteAsync(new Test { TestMessage = i.ToString() });
@@ -126,6 +143,30 @@ namespace gRpcClient
             });
 
             await Task.WhenAll(requestTask, responseTask);
+        }
+
+        private async static Task<string> GetJwtToken(GrpcChannel channel)
+        {
+            var authClient = new Authentication.AuthenticationClient(channel);
+
+            var response = await authClient.AuthenticateAsync(new AuthenticationRequest
+            {
+                UserName = "admin",
+                Password = "admin"
+            });
+
+            Console.WriteLine($"Auth token : {response.AccessToken}\nExpiresIn : {response.ExpiresIn}");
+            return response.AccessToken;
+        }
+
+        private async static Task<int> AddNumbers(GrpcChannel channel, Metadata headers)
+        {
+            var calculateClient = new Calculation.CalculationClient(channel);
+
+            var result = calculateClient.Add(new InputNumbers { Number1 = 1, Number2 = 2 }, headers);
+
+            Console.WriteLine($"Adding result : {result.Result}");
+            return result.Result;
         }
     }
 }
